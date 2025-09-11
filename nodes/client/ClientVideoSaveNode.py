@@ -25,7 +25,7 @@ class VideoSaveNode:
         }
 
     RETURN_TYPES = ("IMAGE", "VIDEO_BUFFER",)
-    RETURN_NAMES = ("images", "video_buffer",)
+    RETURN_NAMES = ("last_image", "video_buffer",)
     FUNCTION = "images_to_video_buffer"
     CATEGORY = "video"
     OUTPUT_NODE = True
@@ -53,4 +53,4 @@ class VideoSaveNode:
         })
 
         # Returning Images and Video Buffer
-        return images, data_stream
+        return images[-1], data_stream
