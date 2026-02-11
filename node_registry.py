@@ -3,6 +3,7 @@ from .nodes.client.ClientVideoSaveNode import VideoSaveNode
 from .nodes.remote.RemoteImageLoader import RemoteImageLoader
 from .nodes.memory.MemoryImageNode import MemoryImageNode
 from .nodes.memory.TemporaryImagePreview import TemporaryImagePreview
+from .nodes.input.InputDataToImage import InputDataToImage
 
 # Node Registration for ComfyUI
 NODE_CLASS_MAPPINGS = {
@@ -10,7 +11,8 @@ NODE_CLASS_MAPPINGS = {
     "ClientVideoDownloadNode": VideoSaveNode,
     "ServerMemoryImageNode": MemoryImageNode,
     "RemoteImageLoader": RemoteImageLoader,
-    "TemporaryImagePreview": TemporaryImagePreview
+    "TemporaryImagePreview": TemporaryImagePreview,
+    "InputDataToImage": InputDataToImage
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -18,5 +20,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "ClientVideoDownloadNode": "Client Video Download",
     "RemoteImageLoader": "Remote Image Loader",
     "ServerMemoryImageNode": "Server Memory Image Node",
-    "TemporaryImagePreview": "Temporary Image Preview"
+    "TemporaryImagePreview": "Temporary Image Preview",
+    "InputDataToImage": "Input Data to Image"
 }
