@@ -4,7 +4,7 @@ app.registerExtension({
     name: "custom.inputDataToImage",
 
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
-        if (nodeData.name === "InputDataToImage") {
+        if (nodeData.name === "UniversalDataToImage") {
             const onNodeCreated = nodeType.prototype.onNodeCreated;
 
             nodeType.prototype.onNodeCreated = function() {

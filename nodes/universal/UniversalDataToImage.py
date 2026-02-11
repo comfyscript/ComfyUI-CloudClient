@@ -5,7 +5,10 @@ from PIL import Image
 import torch
 import requests
 
-class InputDataToImage:
+# Configuration: Timeout for URL downloads (seconds)
+REQUEST_TIMEOUT = 30
+
+class UniversalDataToImage:
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -13,27 +16,25 @@ class InputDataToImage:
                 "data_uri": ("STRING", {
                     "multiline": True,
                     "default": ""
-                }),
-                "timeout": ("INT", {
-                    "default": 30,
-                    "min": 5,
-                    "max": 120,
-                    "step": 1,
                 })
             }
         }
 
-    RETURN_TYPES = ("IMAGE", "MASK")
+    RETURN_TYPES = ("IMAGE", "MASK", "INT", "INT")
+    RETURN_NAMES = ("IMAGE", "MASK", "width", "height")
     FUNCTION = "load_image"
     CATEGORY = "image"
 
-    def load_image(self, data_uri, timeout=30):
+    def load_image(self, data_uri):
         # Check if input is a URL
         if data_uri.startswith('http://') or data_uri.startswith('https://'):
-            image = self._load_from_url(data_uri, timeout)
+            image = self._load_from_url(data_uri, REQUEST_TIMEOUT)
         else:
             # Handle as data URI or base64
             image = self._load_from_data_uri(data_uri)
+
+        # Get image dimensions
+        width, height = image.size
 
         # Process image and extract mask
         if image.mode == 'RGBA':
@@ -45,13 +46,13 @@ class InputDataToImage:
         else:
             image_rgb = image.convert('RGB')
             # Create full opacity mask
-            mask = torch.ones((1, image.size[1], image.size[0]), dtype=torch.float32)
+            mask = torch.ones((1, height, width), dtype=torch.float32)
 
         # Convert to ComfyUI format (batch, height, width, channels)
         image_np = np.array(image_rgb).astype(np.float32) / 255.0
         image_tensor = torch.from_numpy(image_np)[None,]
 
-        return (image_tensor, mask)
+        return (image_tensor, mask, width, height)
 
     def _load_from_url(self, url, timeout):
         """Download image from HTTP/HTTPS URL"""
