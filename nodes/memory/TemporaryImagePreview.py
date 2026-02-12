@@ -26,9 +26,8 @@ class TemporaryImagePreview:
     OUTPUT_NODE = True
     CATEGORY = "image/preview"
 
-    def preview_image(self, images):
+    def preview_image(self, images, prompt_id=None, extra_pnginfo=None):
         # Convert the first image from torch tensor to PIL Image
-        # ComfyUI images are in [B, H, W, C] format with values 0-1
         image_tensor = images[0]
 
         # Convert to numpy and scale to 0-255
@@ -42,14 +41,14 @@ class TemporaryImagePreview:
         pil_image.save(buffered, format="PNG", compress_level=4)
         img_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
 
-        # Send to UI without saving
+        # Send to UI with unique identifier
         PromptServer.instance.send_sync(
             "imagepreview.update",
             {
                 "image": f"data:image/png;base64,{img_base64}",
-                "node_id": id(self)
+                "node_id": str(id(self))  # Ensure it's a string
             }
         )
 
-        # Pass through the images unchanged
-        return (images,)
+        # Return result needed for OUTPUT_NODE
+        return {"ui": {"images": []}, "result": (images,)}
